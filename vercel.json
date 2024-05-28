@@ -24,6 +24,5 @@
       "src": "/(.*)",
       "dest": "syso/wsgi.py"
     }
-  ],
-  "outputDirectory": "ui/staticfiles"
+  ]
 }
