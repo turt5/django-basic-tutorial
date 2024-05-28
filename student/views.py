@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.http import JsonResponse
-from .models import Student
+from .models import Student,Course
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -44,3 +44,30 @@ def student_detail(request, student_id):
         "name": student.name,
         "email": student.email
     })
+    
+@csrf_exempt    
+def course(request):
+    if request.method=="POST":
+        try:
+            data=json.loads(request.body)
+            courseCode=data.get('courseCode')
+            courseName=data.get('courseName')
+            if courseCode and courseName:
+                course=Course(courseCode=courseCode,courseName=courseName)
+                course.save()
+                return JsonResponse({"message":"Course registered successfully!"})
+            else:
+                return JsonResponse({"error":"Missing course code or course name"},status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({"error":"Invalid JSON data"},status=400)
+    
+    elif request.method=="GET":
+    #show course
+        courses=Course.objects.all()
+        
+        if(courses.exists()):
+            courses_list=list(courses.values())
+            return JsonResponse({"courses":courses_list})
+        else:
+        
+            return JsonResponse({"message":"No courses found!"})
